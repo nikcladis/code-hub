@@ -1,37 +1,134 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# **Code Hub (SaaS)** 🚀💻
 
-## Getting Started
+Code snippet manager. This project demonstrates user's ability to share, execute, and comment on code snippets in various programming languages.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## **Tech Stack** 🛠️
+- **Frontend:** Next.js 15 ⚛️
+- **Authentication:** [Clerk](https://clerk.dev) 🔑 (Google 🌐 and GitHub 🐙 authentication)
+- **Database:** [Convex](https://convex.dev) 📦
+
+---
+
+## **Key Features** ✨
+- **Authentication:**  
+  🔑 Secure login via Google 🌐 and GitHub 🐙 using Clerk.
+- **Code Snippet Management:**  
+  📄 Create, share, and manage code snippets.  
+  💬 Add comments on snippets.  
+  ⭐ Star favorite snippets for quick access.
+- **Code Execution Logs:**  
+  🖥️ Store and view details of executed code.
+- **User Management:**  
+  🌟 Pro user support with LemonSqueezy integration for subscriptions.
+
+---
+
+## **Convex Database Schema** 🗄️
+The database is structured using Convex for real-time interactions. Below is the schema definition:
+
+```ts
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
+
+export default defineSchema({
+  codeExecutions: defineTable({
+    code: v.string(),
+    error: v.optional(v.string()),
+    language: v.string(),
+    output: v.optional(v.string()),
+    userId: v.string(),
+  }).index("by_user_id", ["userId"]),
+  snippetComments: defineTable({
+    content: v.string(),
+    snippetId: v.id("snippets"),
+    userId: v.string(),
+    userName: v.string(),
+  }).index("by_snippet_id", ["snippetId"]),
+  snippets: defineTable({
+    code: v.string(),
+    language: v.string(),
+    title: v.string(),
+    userId: v.string(),
+    userName: v.string(),
+  }).index("by_user_id", ["userId"]),
+  stars: defineTable({
+    snippetId: v.id("snippets"),
+    userId: v.string(),
+  })
+    .index("by_snippet_id", ["snippetId"])
+    .index("by_user_id", ["userId"])
+    .index("by_user_id_and_snippet_id", [
+      "userId",
+      "snippetId",
+    ]),
+  users: defineTable({
+    email: v.string(),
+    isPro: v.boolean(),
+    lemonSqueezyId: v.optional(v.string()),
+    lemonSqueezyOrderId: v.optional(v.string()),
+    name: v.string(),
+    proSince: v.optional(v.float64()),
+    userId: v.string(),
+  }).index("by_user_id", ["userId"]),
+});
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## **Getting Started** 🏁
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### **Prerequisites** ✅
+- **Node.js** (v16 or higher) 🟢
+- **npm** or **yarn** 📦
+- **Convex CLI** 🔧
+- **Clerk API keys** 🔑
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### **Installation** 📥
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/code-hub-saas.git
+   ```
+2. **Navigate to the project directory:**
+    ```bash
+    cd code-hub-saas
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3. **Install dependencies:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ```bash
+    npm install
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. **Setup ⚙️**
 
-## Deploy on Vercel
+    Create a .env file and add your Clerk and Convex credentials:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+    ```env
+    NEXT_PUBLIC_CLERK_FRONTEND_API=<your-clerk-api>
+    CONVEX_URL=<your-convex-url>
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# code-hub
+5. **Run the Convex schema:**
+    
+    ```bash
+    npx convex dev
+    ```
+
+6. **Start the development server:**
+    ```bash
+    npm run dev
+    ```
+7. **Access the application at:**
+    ```arduino
+    http://localhost:3000
+    ```
+---
+
+## Usage 📘
+- **Sign In**: Log in using your Google 🌐 or GitHub 🐙 account.
+- **Create Snippets**: Add code snippets with a title, language, and optional description.
+- **Collaborate**: Add comments 💬 and discuss snippets with other users.
+- **Pro Features**: Unlock advanced features 🌟 by upgrading to Pro via LemonSqueezy.
+
